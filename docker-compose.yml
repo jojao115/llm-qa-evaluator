@@ -1,0 +1,23 @@
+# docker compose up --build  → API em http://localhost:8000 (documentação em /docs).
+# Sem .env, roda com o juiz simulado (sem chave, sem custo). Com LLM_PROVEDOR=anthropic e
+# ANTHROPIC_API_KEY no .env, usa o Claude.
+name: llm-qa-evaluator
+
+services:
+  api:
+    build: .
+    ports:
+      - '127.0.0.1:${API_PORTA:-8000}:8000'
+    environment:
+      LLM_PROVEDOR: ${LLM_PROVEDOR:-simulado}
+      LLM_MODELO: ${LLM_MODELO:-claude-opus-5-5}
+      LLM_ESFORCO: ${LLM_ESFORCO:-medium}
+      MAX_TENTATIVAS: ${MAX_TENTATIVAS:-3}
+      LOTE_CONCORRENCIA: ${LOTE_CONCORRENCIA:-4}
+      LOTE_FILA_MAX: ${LOTE_FILA_MAX:-2000}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+    # As rubricas ficam montadas: editar o YAML e chamar POST /rubricas/recarregar
+    # troca a rubrica sem rebuild nem deploy.
+    volumes:
+      - ./app/rubrics:/srv/app/rubrics:ro
+    restart: unless-stopped
