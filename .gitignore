@@ -1,0 +1,25 @@
+# Ambiente
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Ferramentas
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Credenciais: só o exemplo vai para o Git
+.env
+.env.*
+!.env.example
+
+# Editor e sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

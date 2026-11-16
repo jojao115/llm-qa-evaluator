@@ -1,0 +1,141 @@
+# Rubrica de monitoria para atendimento de provedor de internet (chat e WhatsApp).
+# Trocar um critério, um peso ou a descrição de um nível não pede deploy:
+# a API lê os arquivos desta pasta na partida e em POST /rubricas/recarregar.
+id: suporte_provedor_v1
+nome: Suporte de provedor de internet
+versao: 1
+descricao: >
+  Atendimento por texto de um provedor de internet: suporte técnico, financeiro,
+  mudança de plano e cancelamento.
+
+# Como cada nível vira número. "nao_se_aplica" sai da conta (não pesa nem a favor nem contra).
+niveis:
+  atende: 1.0
+  parcial: 0.5
+  nao_atende: 0.0
+
+criterios:
+  - id: saudacao
+    bloco: abertura
+    nome: Saudação e identificação
+    peso: 1
+    descricao: O atendente cumprimenta e diz o próprio nome na primeira mensagem dele.
+    atende: Cumprimenta e se identifica pelo nome.
+    parcial: Cumprimenta, mas não diz o nome (ou diz o nome sem cumprimentar).
+    nao_atende: Começa direto no assunto, sem cumprimento nem identificação.
+
+  - id: identificacao_titular
+    bloco: abertura
+    nome: Confirmação do titular
+    peso: 2
+    critico: true
+    descricao: >
+      Antes de passar dado da conta (fatura, endereço, senha do Wi-Fi) ou de mexer nela
+      (mudar plano, cancelar, desbloquear), confirma que fala com o titular, por CPF,
+      número do contrato ou dado equivalente.
+    atende: Confirma o titular antes de passar dado ou alterar a conta.
+    parcial: Confirma, mas só depois de já ter passado algum dado da conta.
+    nao_atende: Passa dado ou altera a conta sem confirmar quem é o cliente.
+    nao_se_aplica: A conversa não envolve dado nem alteração da conta.
+
+  - id: entendimento
+    bloco: diagnostico
+    nome: Entendimento do pedido
+    peso: 1
+    descricao: Confirma ou reformula o que o cliente pediu antes de agir, e não responde outra coisa.
+    atende: Mostra que entendeu o pedido e responde ao que foi pedido.
+    parcial: Entende, mas só depois de responder algo fora do pedido ou pedir o que o cliente já disse.
+    nao_atende: Responde a outro problema ou ignora parte importante do pedido.
+
+  - id: diagnostico
+    bloco: diagnostico
+    nome: Diagnóstico técnico
+    peso: 2
+    descricao: >
+      Em problema técnico (sem internet, lentidão, Wi-Fi), faz os testes básicos antes de
+      concluir: luzes do equipamento, reinício, teste por cabo ou de velocidade, sinal.
+    atende: Faz os testes que o caso pede antes de concluir ou abrir visita.
+    parcial: Faz parte dos testes, ou abre visita pulando um teste simples que resolveria.
+    nao_atende: Conclui ou abre visita sem nenhum teste.
+    nao_se_aplica: Não é um problema técnico.
+
+  - id: solucao_correta
+    bloco: resolucao
+    nome: Solução correta
+    peso: 3
+    descricao: A solução dada ou o encaminhamento feito resolve o problema do cliente, ou é o passo certo para resolver.
+    atende: Resolve, ou encaminha para o setor ou procedimento certo.
+    parcial: Resolve só parte do problema, ou o encaminhamento é certo mas incompleto.
+    nao_atende: Não resolve e não encaminha, ou encaminha para o lugar errado.
+
+  - id: procedimento
+    bloco: resolucao
+    nome: Procedimento e prazo
+    peso: 2
+    descricao: >
+      Quando o caso pede registro (visita técnica, contestação, mudança de plano), abre o
+      registro e informa o prazo de atendimento.
+    atende: Registra e informa o prazo.
+    parcial: Registra, mas não informa o prazo (ou informa prazo sem registrar).
+    nao_atende: O caso pedia registro e nada foi registrado.
+    nao_se_aplica: O caso se resolve na própria conversa, sem registro.
+
+  - id: informacao_precisa
+    bloco: resolucao
+    nome: Informação precisa
+    peso: 3
+    critico: true
+    descricao: >
+      Não dá informação errada e não promete o que não pode cumprir: prazo inventado,
+      desconto sem autorização, "vai voltar em 5 minutos" sem base.
+    atende: Tudo o que informa é coerente e não há promessa sem base.
+    parcial: Uma informação vaga ou imprecisa, sem prejuízo direto ao cliente.
+    nao_atende: Informação errada ou promessa sem base que pode prejudicar o cliente.
+
+  - id: clareza
+    bloco: comunicacao
+    nome: Clareza
+    peso: 1
+    descricao: Escreve de forma clara e explica termos técnicos (ONU, DNS, IP) quando usa.
+    atende: Mensagens claras, sem jargão solto.
+    parcial: Uma ou outra mensagem confusa ou com jargão sem explicação.
+    nao_atende: O cliente não entende o que fazer por causa da forma como foi escrito.
+
+  - id: empatia
+    bloco: comunicacao
+    nome: Empatia e cordialidade
+    peso: 1
+    descricao: Reconhece o incômodo do cliente, mantém tom cordial e não culpa o cliente.
+    atende: Cordial do começo ao fim e reconhece o incômodo quando há.
+    parcial: Cordial, mas frio ou mecânico diante de um cliente irritado.
+    nao_atende: Ríspido, irônico ou culpa o cliente.
+
+  - id: retencao
+    bloco: resolucao
+    nome: Retenção
+    peso: 2
+    descricao: >
+      Em pedido de cancelamento, pergunta o motivo e oferece uma alternativa que faça
+      sentido para esse motivo, sem dificultar o cancelamento quando o cliente insiste.
+    atende: Pergunta o motivo e oferece alternativa coerente; respeita a decisão final.
+    parcial: Oferece algo sem perguntar o motivo, ou pergunta e não oferece nada.
+    nao_atende: Cancela sem tentar nada, ou insiste e dificulta depois de o cliente decidir.
+    nao_se_aplica: Não há pedido de cancelamento.
+
+  - id: protocolo
+    bloco: encerramento
+    nome: Protocolo
+    peso: 1
+    descricao: Informa o número de protocolo do atendimento.
+    atende: Informa o protocolo.
+    parcial: Diz que vai mandar o protocolo depois, sem informar na conversa.
+    nao_atende: Não informa protocolo.
+
+  - id: encerramento
+    bloco: encerramento
+    nome: Encerramento
+    peso: 1
+    descricao: Antes de encerrar, confirma se o problema foi resolvido ou se há algo mais.
+    atende: Confirma com o cliente antes de encerrar.
+    parcial: Encerra com despedida, mas sem confirmar nada.
+    nao_atende: Encerra de forma abrupta ou deixa o cliente sem resposta.
